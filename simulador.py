@@ -9,11 +9,15 @@ Uso: python simulador.py
 """
 
 import bot_core
+import db
 
 SESSION_ID = 'demo-1'
 
 
 def main():
+    # Asegura el esquema de la base antes de procesar cualquier mensaje.
+    db.init_db()
+
     print('=== Simulador Soporte Tecnico N1 ===')
     print('Escriba "salir" para terminar.\n')
 

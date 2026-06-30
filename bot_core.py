@@ -5,6 +5,8 @@ Implementa la maquina de estados finitos (FSM) del proceso documentado.
 Estados: INICIO, ESPERA_NOMBRE, ESPERA_AREA, ESPERA_DESC, CIERRE.
 """
 
+import db
+
 # Estado de cada conversacion identificada por session_id.
 sessions = {}  # { session_id: {'state': 'INICIO', 'ticket': {}} }
 
@@ -50,6 +52,9 @@ def process_message(sid, texto):
         prio = 'ALTA' if cat in HIGH_P else 'MEDIA'  # GW2
         tid = f'TK-{abs(hash(sid)) % 9000 + 1000}'
         s['ticket'].update({'cat': cat, 'prio': prio, 'tid': tid, 'desc': texto.strip()})
+
+        # Se persiste el ticket ya clasificado antes de cerrar la conversacion.
+        db.guardar_ticket(s['ticket'])
 
         s['state'] = 'CIERRE'
         return (f'Ticket generado: {tid} | Categoria: {cat} | Prioridad: {prio}. '
